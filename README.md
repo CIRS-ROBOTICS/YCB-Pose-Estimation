@@ -5,7 +5,7 @@ This code employs Grounded SAM and FFB6D with ICP to estimate object poses.
 
 * FFB6D
 
-You can follow this link([ffb6d](https://github.com/IntelRealSense/librealsense)) to install it. The pretrained weights file shoule be placed in /FFB6D/ffb6d/train_log/ycb/checkpoints.
+You can follow this link([ffb6d](https://github.com/ethnhe/FFB6D)) to install it. The pretrained weights file shoule be placed in /FFB6D/ffb6d/train_log/ycb/checkpoints.
 
 * Grounded SAM
 
