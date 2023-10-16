@@ -41,8 +41,6 @@ Third, you can download the pretrained weights from the below way or refer to th
 [SAM](https://github.com/facebookresearch/segment-anything)) to download more pre-trained models.
 
 ```bash
-cd Grounded-Segment-Anything
-
 wget https://dl.fbaipublicfiles.com/segment_anything/sam_vit_h_4b8939.pth
 wget https://github.com/IDEA-Research/GroundingDINO/releases/download/v0.1.0-alpha/groundingdino_swint_ogc.pth
 ```
