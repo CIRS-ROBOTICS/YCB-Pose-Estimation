@@ -7,9 +7,6 @@ import os
 import torch
 import copy
 from util import *
-# from tsdf import *
-# from real_test_hand import *
-# from real_test2 import *
 
 import sys
 # sys.path.append("/home/barry/cxg/pose_estimation/FFB6D/ffb6d")
@@ -18,9 +15,6 @@ from FFB6D.ffb6d.models.ffb6d import FFB6D
 from FFB6D.ffb6d.datasets.ycb.ycb_dataset import Dataset as YCB_Dataset
 import tqdm
 import time
-from manopth.manolayer import ManoLayer
-from torch.utils.data import DataLoader
-import torch.nn.functional as F
 
 FILE_NUM="000001"
 config = Config(ds_name='ycb')
@@ -29,45 +23,45 @@ if __name__=="__main__":
     parser = argparse.ArgumentParser("Hand-Object Pose Estimation", add_help=True)
     # -------------------- Realsense and Robot configure ----------------
     parser.add_argument("--save_cam_intri_path", type= str,
-                        default="/home/barry/cxg/YCB_pose_estimation/FFB6D/ffb6d/datasets/ycb/YCB_Video_Dataset/real_img/cam_intrin.txt")
+                        default="/home/barry/cxg/YCB-Pose-Estimation/FFB6D/ffb6d/datasets/ycb/YCB_Video_Dataset/real_img/cam_intrin.txt")
     parser.add_argument("--use_record_data", type=bool, default=True)
     # -------------------- GSAM model configure --------------------
     parser.add_argument("--grounding_dino_config_path", type=str, 
-                        default="/home/barry/cxg/YCB_pose_estimation/Grounded-Segment-Anything/GroundingDINO/groundingdino/config/GroundingDINO_SwinT_OGC.py")
+                        default="/home/barry/cxg/YCB-Pose-Estimation/Grounded-Segment-Anything/GroundingDINO/groundingdino/config/GroundingDINO_SwinT_OGC.py")
     parser.add_argument("--grounding_dino_checkpoint_path", type=str, 
-                        default="/home/barry/cxg/YCB_pose_estimation/Grounded-Segment-Anything/groundingdino_swint_ogc.pth")
+                        default="/home/barry/cxg/YCB-Pose-Estimation/Grounded-Segment-Anything/groundingdino_swint_ogc.pth")
     parser.add_argument("--sam_encoder_version", type=str, default="vit_h")
     parser.add_argument("--sam_checkpoint_path", type=str, 
-                        default="/home/barry/cxg/YCB_pose_estimation/Grounded-Segment-Anything/sam_vit_h_4b8939.pth")
+                        default="/home/barry/cxg/YCB-Pose-Estimation/Grounded-Segment-Anything/sam_vit_h_4b8939.pth")
     parser.add_argument("--box_threshold", type=float, default=0.25)
     parser.add_argument("--text_threshold", type=float, default=0.25)
     parser.add_argument("--nms_threshold", type=float, default=0.8)
     # -------------------- Segmentation input configure --------------------
     parser.add_argument("--source_image_path", type=str, 
-                        default="/home/barry/cxg/YCB_pose_estimation/FFB6D/ffb6d/datasets/ycb/YCB_Video_Dataset/real_img/000001-color.png")
+                        default="/home/barry/cxg/YCB-Pose-Estimation/FFB6D/ffb6d/datasets/ycb/YCB_Video_Dataset/real_img/000001-color.png")
     parser.add_argument("--source_depth_path", type=str,
-                        default="/home/barry/cxg/YCB_pose_estimation/FFB6D/ffb6d/datasets/ycb/YCB_Video_Dataset/real_img/000001-depth.png")
+                        default="/home/barry/cxg/YCB-Pose-Estimation/FFB6D/ffb6d/datasets/ycb/YCB_Video_Dataset/real_img/000001-depth.png")
     parser.add_argument("--save_mask_path", type=str, 
-                        default="/home/barry/cxg/YCB_pose_estimation/FFB6D/ffb6d/datasets/ycb/YCB_Video_Dataset/real_img/000001-label.png")
+                        default="/home/barry/cxg/YCB-Pose-Estimation/FFB6D/ffb6d/datasets/ycb/YCB_Video_Dataset/real_img/000001-label.png")
     parser.add_argument("--classes", type=list, default=["scissors"], help="['object1', 'object2', ....]")
     # -------------------- FFB6D model configure --------------------
     parser.add_argument("--FFB6D_checkpoint", type=str, 
-                        default='/home/barry/cxg/YCB_pose_estimation/FFB6D/ffb6d/train_log/ycb/checkpoints/FFB6D_best.pth.tar')
+                        default='/home/barry/cxg/YCB-Pose-Estimation/FFB6D/ffb6d/train_log/ycb/checkpoints/FFB6D_best.pth.tar')
     parser.add_argument("--n_objects", type=int, default=21+1, help="21 objects + background")
     parser.add_argument("--n_sample_points", type=int, default=480 * 640 // 24, help="Number of input points")
     parser.add_argument("--n_keypoints", type=int, default=8)
     parser.add_argument("--img_path", type=str, 
-                        default="/home/barry/cxg/YCB_pose_estimation/FFB6D/ffb6d/datasets/ycb/YCB_Video_Dataset/real_img",
+                        default="/home/barry/cxg/YCB-Pose-Estimation/FFB6D/ffb6d/datasets/ycb/YCB_Video_Dataset/real_img",
                         help="The root path to input data")
     parser.add_argument("--obj_id", type=int, default=17, 
-                        help="Refer to /home/barry/cxg/YCB_pose_estimation/FFB6D/ffb6d/datasets/ycb/dataset_config/classes.txt")
+                        help="Refer to /home/barry/cxg/YCB-Pose-Estimation/FFB6D/ffb6d/datasets/ycb/dataset_config/classes.txt")
     parser.add_argument("--real_data_list", type=str,
-                        default="/home/barry/cxg/YCB_pose_estimation/FFB6D/ffb6d/datasets/ycb/dataset_config/real_data_list.txt",
+                        default="/home/barry/cxg/YCB-Pose-Estimation/FFB6D/ffb6d/datasets/ycb/dataset_config/real_data_list.txt",
                         help="Store the real data filename")
     parser.add_argument("--ffb6d_root", type=str,
-                        default='/home/barry/cxg/YCB_pose_estimation/FFB6D/ffb6d/datasets/ycb/YCB_Video_Dataset/')
+                        default='/home/barry/cxg/YCB-Pose-Estimation/FFB6D/ffb6d/datasets/ycb/YCB_Video_Dataset/')
     parser.add_argument("--mesh_path", type=str,
-                        default="/home/barry/cxg/YCB_pose_estimation/FFB6D/ffb6d/datasets/ycb/YCB_Video_Dataset/models")
+                        default="/home/barry/cxg/YCB-Pose-Estimation/FFB6D/ffb6d/datasets/ycb/YCB_Video_Dataset/models")
     parser.add_argument("--ICP_vis", type=bool, default=False, help="visualize the process of ICP")
     parser.add_argument("--vis_pose", type=bool, default=False, help="visualize the result of object pose estimation in the view of 2D")
     args = parser.parse_args()
