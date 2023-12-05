@@ -7,7 +7,7 @@ import pickle as pkl
 import concurrent.futures
 
 import sys
-SYSTEM_PATH="/home/barry/cxg/YCB_pose_estimation/FFB6D/ffb6d"
+SYSTEM_PATH="/home/barry/cxg/YCB-Pose-Estimation/FFB6D/ffb6d"
 sys.path.append(SYSTEM_PATH)
 
 from common import Config

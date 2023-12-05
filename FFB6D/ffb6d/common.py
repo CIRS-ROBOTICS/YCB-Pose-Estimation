@@ -3,7 +3,7 @@ import os
 import yaml
 import numpy as np
 
-SYSTEM_PATH="/home/barry/cxg/YCB_pose_estimation/FFB6D/ffb6d"
+SYSTEM_PATH="/home/barry/cxg/YCB-Pose-Estimation/FFB6D/ffb6d"
 
 def ensure_fd(fd):
     if not os.path.exists(fd):

@@ -12,12 +12,12 @@ import copy
 DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 # GroundingDINO config and checkpoint
-GROUNDING_DINO_CONFIG_PATH = "/home/barry/cxg/YCB_pose_estimation/Grounded-Segment-Anything/GroundingDINO/groundingdino/config/GroundingDINO_SwinT_OGC.py"
-GROUNDING_DINO_CHECKPOINT_PATH = "/home/barry/cxg/YCB_pose_estimation/Grounded-Segment-Anything/groundingdino_swint_ogc.pth"
+GROUNDING_DINO_CONFIG_PATH = "/home/barry/cxg/YCB-Pose-Estimation/Grounded-Segment-Anything/GroundingDINO/groundingdino/config/GroundingDINO_SwinT_OGC.py"
+GROUNDING_DINO_CHECKPOINT_PATH = "/home/barry/cxg/YCB-Pose-Estimation/Grounded-Segment-Anything/groundingdino_swint_ogc.pth"
 
 # Segment-Anything checkpoint
 SAM_ENCODER_VERSION = "vit_h"
-SAM_CHECKPOINT_PATH = "/home/barry/cxg/YCB_pose_estimation/Grounded-Segment-Anything/sam_vit_h_4b8939.pth"
+SAM_CHECKPOINT_PATH = "/home/barry/cxg/YCB-Pose-Estimation/Grounded-Segment-Anything/sam_vit_h_4b8939.pth"
 
 # Building GroundingDINO inference model
 grounding_dino_model = Model(model_config_path=GROUNDING_DINO_CONFIG_PATH, model_checkpoint_path=GROUNDING_DINO_CHECKPOINT_PATH)
@@ -29,7 +29,7 @@ sam_predictor = SamPredictor(sam)
 
 
 # Predict classes and hyper-param for GroundingDINO
-SOURCE_IMAGE_PATH = "/home/barry/cxg/YCB_pose_estimation/Grounded-Segment-Anything/assets/sciss_rgb.png"
+SOURCE_IMAGE_PATH = "/home/barry/cxg/YCB-Pose-Estimation/Grounded-Segment-Anything/assets/sciss_rgb.png"
 CLASSES = ["hand"] # ['object1', 'object2', ....]
 BOX_THRESHOLD = 0.25
 TEXT_THRESHOLD = 0.25
@@ -99,7 +99,7 @@ for idx in range(detections.mask.shape[0]): #
     submask = copy.deepcopy(detections.mask)[idx] # (H,W)
     mask_image = np.bitwise_or(mask_image, submask.astype(np.uint8)) #
 mask_image = mask_image * 255 #
-cv2.imwrite('/home/barry/cxg/YCB_pose_estimation/Grounded-Segment-Anything/mask_sciss.png', mask_image) #
+cv2.imwrite('/home/barry/cxg/YCB-Pose-Estimation/Grounded-Segment-Anything/mask_sciss.png', mask_image) #
 
 # annotate image with detections
 box_annotator = sv.BoxAnnotator()

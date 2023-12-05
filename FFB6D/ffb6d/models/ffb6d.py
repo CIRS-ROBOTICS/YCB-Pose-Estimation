@@ -6,7 +6,7 @@ import sys
 from models.cnn.pspnet import PSPNet
 import models.pytorch_utils as pt_utils
 from models.RandLA.RandLANet import Network as RandLANet
-SYSTEM_PATH="/home/barry/cxg/YCB_pose_estimation/FFB6D/ffb6d"
+SYSTEM_PATH="/home/barry/cxg/YCB-Pose-Estimation/FFB6D/ffb6d"
 sys.path.append(SYSTEM_PATH)
 
 

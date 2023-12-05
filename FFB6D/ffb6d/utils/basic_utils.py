@@ -12,7 +12,7 @@ from utils.ip_basic.ip_basic import vis_utils
 from utils.ip_basic.ip_basic import depth_map_utils_ycb as depth_map_utils
 
 import sys
-SYSTEM_PATH="/home/barry/cxg/YCB_pose_estimation/FFB6D/ffb6d"
+SYSTEM_PATH="/home/barry/cxg/YCB-Pose-Estimation/FFB6D/ffb6d"
 sys.path.append(SYSTEM_PATH)
 
 

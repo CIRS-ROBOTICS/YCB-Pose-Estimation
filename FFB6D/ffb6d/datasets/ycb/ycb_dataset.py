@@ -18,7 +18,7 @@ except:
 import normalSpeed
 from models.RandLA.helper_tool import DataProcessing as DP
 
-SYSTEM_PATH="/home/barry/cxg/YCB_pose_estimation/FFB6D/ffb6d"
+SYSTEM_PATH="/home/barry/cxg/YCB-Pose-Estimation/FFB6D/ffb6d"
 
 config = Config(ds_name='ycb')
 bs_utils = Basic_Utils(config)
