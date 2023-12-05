@@ -75,6 +75,21 @@ def nms_post_process(detections, nms_threshold):
 
     return detections
 
+def optimal_process(detections):
+    # Optimal processing
+    num_category = len(np.unique(detections.class_id)) # get the number of category
+    category_box_index = [np.where(detections.class_id==i)[0] for i in range(num_category)] # get the corresponding box index according to the category
+    category_box_confidence = [detections.confidence[category_box_index[i]] for i in range(num_category)] # # get the corresponding box affordance according to the category
+    optimal_box_index = [category_box_index[i][np.argmax(category_box_confidence[i])] for i in range(num_category)] # [label0->optimal_index,label1->optimal_index,...]
+
+    detections.xyxy = detections.xyxy[optimal_box_index]
+    detections.confidence = detections.confidence[optimal_box_index]
+    detections.class_id = detections.class_id[optimal_box_index]
+
+    print(f"Optimal NMS: {len(detections.xyxy)} boxes")
+    
+    return detections
+
 # Prompting SAM with detected boxes
 def segment(sam_predictor: SamPredictor, image: np.ndarray, xyxy: np.ndarray) -> np.ndarray:
     sam_predictor.set_image(image)
@@ -352,6 +367,6 @@ def visual_pose_estimation(cam_intri, final_pose, mesh_pts_dataset, obj_id, np_r
     color = bs_utils.get_label_color(obj_id, n_obj=22, mode=2)
     np_rgb = bs_utils.draw_p2ds(np_rgb, mesh_p2ds, color=color)
 
-    cv2.imwrite("/home/barry/cxg/YCB_pose_estimation/fine_pose_estimation.png", np_rgb)  #存下图片
+    cv2.imwrite("/home/barry/cxg/YCB-Pose-Estimation/fine_pose_estimation.png", np_rgb)  #存下图片
 
     return mesh_pts

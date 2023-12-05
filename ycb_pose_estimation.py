@@ -125,6 +125,11 @@ if __name__=="__main__":
     detections = nms_post_process(detections, args.nms_threshold)
     print("NMS time:%s" %(time.time()-start_NMS))
 
+    start_optimal = time.time()
+    # Optional optimal process: Select the detection frame with the highest confidence for each category
+    detections = optimal_process(detections)
+    print("optimal time:%s" %(time.time()-start_optimal ))
+
     start_seg = time.time()
     # convert detections to masks
     detections.mask = segment(
